@@ -4,3 +4,5 @@ In this project I used player positions to try and predict yards gained on a pla
 
 
 The training data is too large to include in this repository.
+
+The folder includes the final model, derived through different tests on various ML structures. Included is also the tests I wrote to make conclusions about the capability of the model. 
