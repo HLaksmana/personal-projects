@@ -1,3 +1,3 @@
 # Benjamin Cole Project Portfolio
 
-A collection of my personal coding projects
+A collection highlighting some of my personal coding projects
