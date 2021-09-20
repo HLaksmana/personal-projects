@@ -1,11 +1,14 @@
 from bs4 import BeautifulSoup
 import requests
 import csv
+import os
 
 def main():
 
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, 'symbols.csv')
     symbols = []
-    with open('symbols.csv') as csvfile:
+    with open(filename) as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             symbols.append(row[0])
