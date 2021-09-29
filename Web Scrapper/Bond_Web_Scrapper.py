@@ -30,6 +30,7 @@ def main():
             headers = []
             output = []
             schwab_dict = {}
+            
             for row in rows:
                 schwabData = row.find('tbody').find('tr').findAll('td')
                 colNames = row.find('tbody').find('tr').findAll('th')
