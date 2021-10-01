@@ -13,7 +13,7 @@ def main():
         for row in reader:
             symbols.append(row[0])
     symbols = [s.strip() for s in symbols]    
-    dataHeaders = ['SYMBOL', 'DURATION', 'EXP. RATIO', 'YTD 2021','SEC YIELD', 'PRICE']
+    dataHeaders = ['SYMBOL', 'DURATION', 'EXP. RATIO', 'YTD 2021','YTD as of','SEC YIELD', 'PRICE']
 
     with open('scrappedData.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
@@ -49,13 +49,23 @@ def main():
 
             response = requests.get(url_morningstar.format(symbol))
             mySoup = BeautifulSoup(response.text, 'html.parser')
-            htmlData = mySoup.findAll('span',{'class':'mdc-data-point mdc-data-point--number'})
+            htmlData = mySoup.find('div', {'class': 'fund-quote__data'})
+            tableItems = htmlData.findAll('div', {'class': 'fund-quote__item'})
+            tableDict = {}
+            for item in tableItems:
+                k = item.findAll('span')
+                tableDict[k[0].text.strip()] = k[1].text.strip().replace('\t', '').replace('\n', '')
+            # htmlData = mySoup.findAll('span',{'class':'mdc-data-point mdc-data-point--number'})
 
-            duration = htmlData[-1].text.strip()
-            nav = htmlData[0].text.strip()
+            # duration = htmlData[-1].text.strip()
+            # nav = htmlData[0].text.strip()
 
             # extract: Duration, EXP ratio, YTD 2021, SEC Yield, Price, Last Updated
-            results = [symbol, duration, schwab_dict['Net Expense Ratio'], schwab_dict['YTD Return'], schwab_dict['30-Day SEC Yield'], nav ]
+            ytd = schwab_dict['YTD Return'][:schwab_dict['YTD Return'].index('%') + 1]
+            ytd_asOf = schwab_dict['YTD Return'][schwab_dict['YTD Return'].index('%') + 1:]
+            duration = tableDict['Effective Duration'] if 'Effective Duration' in tableDict else '?'
+            nav = tableDict['NAV / 1-Day Return'] if 'NAV / 1-Day Return' in tableDict else '?'
+            results = [symbol, duration, schwab_dict['Net Expense Ratio'], ytd, ytd_asOf, schwab_dict['30-Day SEC Yield'], nav ]
             writer.writerow(results)
     
 if __name__ == '__main__':

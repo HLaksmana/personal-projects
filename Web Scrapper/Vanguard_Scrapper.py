@@ -4,9 +4,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+import time
 import os
 import csv
-
 
 def extractOverviewTable(htmlTable):
     table = htmlTable.find('tbody')
@@ -62,7 +62,7 @@ def main():
     # Scrape Data from Vanguard month-end-returns table
     browser.get(url_vanguardReturns)
     # wait until the data table loads in on the page
-    WebDriverWait(browser, 15).until(EC.presence_of_element_located((By.XPATH,'/html/body/div[1]/div[3]/div[3]/div[1]/div/div[1]/div[2]/div[6]/div[2]/div[2]/div/table')))
+    WebDriverWait(browser, 15).until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[1]/div[3]/div[3]/div[1]/div/div[1]/div[2]/div[6]/div[2]/div[2]/div/table')))
     html = browser.page_source
     mySoup = BeautifulSoup(html, 'html.parser')
     htmlData = mySoup.findAll('div',{'class':'scrollingTables'})
@@ -80,24 +80,24 @@ def main():
             text = text[:text.index('\xa0')] if '\xa0' in text else text
             headers.append(text)
         returnsTableHeaders.append(headers)
-    with open('vanguard_bond_data.csv', 'w') as csvfile:
+        date = returnsTableHeaders[0][4][returnsTableHeaders[0][4].index('f') + 2:].replace('/','-')
+    with open(os.path.join(dirname, 'vanguard_fund_data_'+ date +'.csv'), 'w') as csvfile:
         writer = csv.writer(csvfile)
-        final_header_info = ['','','','','',returnsTableHeaders[0][4], 'YTD returns ' + returnsTableHeaders[0][6]]
-        final_headers = ['SYMBOL', 'DURATION', 'EXP. RATIO','SEC YIELD','SEC Yield as of', 'PRICE','YTD']
-        writer.writerow(final_header_info)
+        final_headers = ['Ticker', 'Duration', 'Expense Ratio','SEC Yield','SEC Yield info', returnsTableHeaders[0][4],'YTD ' + returnsTableHeaders[0][6].lower()]
         writer.writerow(final_headers)
         overviewDataDict = {}
         for symbol in symbols:
             print('Beginning data retrieval for', symbol)
-            while 'Average duration' not in overviewDataDict:   
+            while 'Average duration' not in overviewDataDict: 
                 browser.get(url_vanguard.format(symbol))
-                WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.XPATH,'/html/body/div[1]/div[3]/div[3]/div[1]/div/div[1]/div/div/div/div[2]/div/div[2]/div[4]/div[2]/div[2]/div[1]/div/table/tbody/tr[4]')))
+                WebDriverWait(browser, 20).until(EC.visibility_of_element_located((By.XPATH,'/html/body/div[1]/div[3]/div[3]/div[1]/div/div[1]/div/div/div/div[2]/div/div[2]/div[4]/div[2]/div[2]/div[1]/div/table/tbody/tr[4]')))
+                time.sleep(.02)
                 html = browser.page_source
                 mySoup = BeautifulSoup(html, 'html.parser')
                 htmlData = mySoup.findAll('table',{'role':'presentation'})
                 overviewDataDict = extractOverviewTable(htmlData[2])
             #               ['SYMBOL', 'DURATION',                      'EXP. RATIO',                   'SEC YIELD',                'SEC Yield as of',          'PRICE',                'YTD']
-            final_data_row = [symbol, overviewDataDict['Average duration'] ,returnsTableDict[symbol][2], returnsTableDict[symbol][6], returnsTableDict[symbol][-1], returnsTableDict[symbol][3], returnsTableDict[symbol][8] ]
+            final_data_row = [symbol, overviewDataDict['Average duration'] ,returnsTableDict[symbol][2], returnsTableDict[symbol][6], returnsTableDict[symbol][-1], returnsTableDict[symbol][3], returnsTableDict[symbol][7] ]
             writer.writerow(final_data_row)
             overviewDataDict = {}
             print(symbol, 'data retrieval complete\n')
