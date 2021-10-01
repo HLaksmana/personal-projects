@@ -18,11 +18,10 @@ def main():
     with open('scrappedData.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(dataHeaders)
+        url_schwab = 'https://www.schwab.wallst.com/Prospect/Research/MutualFunds/Summary.asp?symbol={}'
+        url_morningstar = 'https://www.morningstar.com/funds/xnas/{}/quote'
         for symbol in symbols:   
             print(symbol) 
-            url_schwab = 'https://www.schwab.wallst.com/Prospect/Research/MutualFunds/Summary.asp?symbol={}'
-            url_morningstar = 'https://www.morningstar.com/funds/xnas/{}/quote'
-
             response = requests.get(url_schwab.format(symbol))
             mySoup = BeautifulSoup(response.text, 'html.parser')
             table = mySoup.find('div',{'id':'detailsWrapper'})
@@ -55,12 +54,7 @@ def main():
             for item in tableItems:
                 k = item.findAll('span')
                 tableDict[k[0].text.strip()] = k[1].text.strip().replace('\t', '').replace('\n', '')
-            # htmlData = mySoup.findAll('span',{'class':'mdc-data-point mdc-data-point--number'})
-
-            # duration = htmlData[-1].text.strip()
-            # nav = htmlData[0].text.strip()
-
-            # extract: Duration, EXP ratio, YTD 2021, SEC Yield, Price, Last Updated
+                
             ytd = schwab_dict['YTD Return'][:schwab_dict['YTD Return'].index('%') + 1]
             ytd_asOf = schwab_dict['YTD Return'][schwab_dict['YTD Return'].index('%') + 1:]
             duration = tableDict['Effective Duration'] if 'Effective Duration' in tableDict else '?'
