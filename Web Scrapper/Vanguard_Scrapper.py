@@ -101,6 +101,7 @@ def main():
             writer.writerow(final_data_row)
             overviewDataDict = {}
             print(symbol, 'data retrieval complete\n')
+    browser.quit()
 
         
 if __name__ == '__main__':
