@@ -1,7 +1,0 @@
-2021/11/07-13:37:24.379 751f Reusing MANIFEST /Users/benjamincole/Python Workspace/react/git/personal-projects/Web Scrapper/selenium/Default/IndexedDB/https_wallet.myalgo.com_0.indexeddb.leveldb/MANIFEST-000001
-2021/11/07-13:37:24.380 751f Recovering log #3
-2021/11/07-13:37:24.381 751f Reusing old log /Users/benjamincole/Python Workspace/react/git/personal-projects/Web Scrapper/selenium/Default/IndexedDB/https_wallet.myalgo.com_0.indexeddb.leveldb/000003.log 
-2021/11/07-13:37:42.383 751f Level-0 table #5: started
-2021/11/07-13:37:42.406 751f Level-0 table #5: 13047 bytes OK
-2021/11/07-13:37:42.443 751f Delete type=0 #3
-2021/11/07-13:37:42.447 751f Manual compaction at level-0 from (begin) .. (end); will stop at (end)
