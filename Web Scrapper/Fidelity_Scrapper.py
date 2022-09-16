@@ -27,7 +27,7 @@ def main():
         for row in reader:
             if row:
                 symbols.append(row[0])
-    symbols = [s.strip() for s in symbols if s.startswith('F')]
+    symbols = [s.strip() for s in symbols if s.startswith('F') or s.startswith('SP')]
     
     if os.path.isfile(os.path.join(dirname,'cusip_ref.csv')): 
         with open(os.path.join(dirname,'cusip_ref.csv')) as csvfile:
